@@ -1,0 +1,61 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/Avenir-Heavy.ttf",
+      "sha1": "1fbd4266a5431ab123f91d292b70d0a858138770"
+    },
+    {
+      "path": "assets/fonts/AvenirBook.otf",
+      "sha1": "db6bfde1c5f1f6d8129df5dce9484d88d3646f0d"
+    },
+    {
+      "path": "assets/fonts/AvenirLTStd-Black.otf",
+      "sha1": "eb534ac4079db239cdd489df7a1aa2b874b5b599"
+    },
+    {
+      "path": "assets/fonts/AvenirLight.ttf",
+      "sha1": "e0be597a57a5e2d276f6af0bcbef987d097e5ab5"
+    },
+    {
+      "path": "assets/fonts/AvenirMedium.ttf",
+      "sha1": "6add21b119dcbd7ae3e76440885e417d10d2b67d"
+    },
+    {
+      "path": "assets/fonts/AvenirNextLTPro-Regular.otf",
+      "sha1": "5431b8a80300b8dd7014f2f1d05c66b3f0d89f38"
+    },
+    {
+      "path": "assets/fonts/AvenirRoman.otf",
+      "sha1": "a614776d8ee6be9ed01ccc136ac5daed16ba604b"
+    },
+    {
+      "path": "assets/fonts/Baloo-Regular.ttf",
+      "sha1": "f01dad4692e01e12dace4c17a916483732eabcbd"
+    },
+    {
+      "path": "assets/fonts/Lato-Bold.ttf",
+      "sha1": "c330d59f3e64e07a2571c2ba4f4109b20a168f69"
+    },
+    {
+      "path": "assets/fonts/Lato-Regular.ttf",
+      "sha1": "93c1fcb57f2865b411b4d4fada04eec120dc6b2c"
+    },
+    {
+      "path": "assets/fonts/SFProText-Bold.otf",
+      "sha1": "eedf226b7b837d4c124d61bfc6abb39d88b5a2e6"
+    },
+    {
+      "path": "assets/fonts/SFProText-Medium.otf",
+      "sha1": "92ccaa53c164465e75f00ec47cd7420b6e23ed03"
+    },
+    {
+      "path": "assets/fonts/SFProText-Regular.otf",
+      "sha1": "9d5698ee0a85f104c54ea9fbc9965dfa9a401132"
+    },
+    {
+      "path": "assets/fonts/SFProText-Semibold.otf",
+      "sha1": "a920087806a5ce37b844329c541324ea3df689cf"
+    }
+  ]
+}
