@@ -168,7 +168,7 @@ const ProfileScreen = () => {
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
-  updatesText: {fontSize: 17, fontFamily: AvenirBold},
+  updatesText: {fontSize: 17, fontFamily: AvenirBold, color: 'black'},
   userName: {
     textAlign: 'center',
     marginTop: 5,
