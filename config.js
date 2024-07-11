@@ -8,5 +8,7 @@ export const AvenirBold = 'AvenirLTStd-Black';
 export const LatoRegular = 'Lato-Regular';
 export const BalooRegular = 'Baloo-Regular';
 
-export const SERVER_HOST = 'http://10.0.2.2:4000';
-export const SOCKET_HOST = 'http://10.0.2.2:3200';
+export const SERVER_HOST = 'https://shadowb-ga75.onrender.com';
+export const SOCKET_HOST = 'https://shadowb-ga75.onrender.com';
+// export const SERVER_HOST = "http://10,0.2.2:4000"
+// export const SOCKET_HOST = 'http://10.0.2.2:3200';

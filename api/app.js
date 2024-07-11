@@ -1,17 +1,19 @@
+// app.js
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+const User = require('./models/user');
+const Message = require('./models/message');
+const {userSocketMap} = require('./userSocketMap');
 
 const app = express();
-const port = 4000;
-const cors = require('cors');
-app.use(cors());
 
+app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-
-const jwt = require('jsonwebtoken');
 
 mongoose
   .connect(
@@ -24,13 +26,6 @@ mongoose
     console.log('Error connecting to MongoDB');
   });
 
-app.listen(port, () => {
-  console.log('Server is running on port 4000');
-});
-
-const User = require('./models/user');
-const Message = require('./models/message');
-
 app.post('/register', async (req, res) => {
   const {name, email, password, image} = req.body;
 
@@ -39,10 +34,10 @@ app.post('/register', async (req, res) => {
   newUser
     .save()
     .then(() => {
-      res.status(200).json({message: 'User registered succesfully!'});
+      res.status(200).json({message: 'User registered successfully!'});
     })
     .catch(error => {
-      console.log('Error creating a user');
+      console.log('Error creating a user', error);
       res.status(500).json({message: 'Error registering the user'});
     });
 });
@@ -61,13 +56,12 @@ app.post('/login', async (req, res) => {
     }
 
     const secretKey = crypto.randomBytes(32).toString('hex');
-
     const token = jwt.sign({userId: user._id}, secretKey);
 
     res.status(200).json({token});
   } catch (error) {
-    console.log('error loggin in', error);
-    res.status(500).json({message: 'Error loggin In'});
+    console.log('Error logging in', error);
+    res.status(500).json({message: 'Error logging in'});
   }
 });
 
@@ -85,10 +79,6 @@ app.get('/users/:userId', async (req, res) => {
 app.post('/sendrequest', async (req, res) => {
   const {senderId, receiverId, message} = req.body;
 
-  console.log(senderId);
-  console.log(receiverId);
-  console.log(message);
-
   const receiver = await User.findById(receiverId);
   if (!receiver) {
     return res.status(404).json({message: 'Receiver not found'});
@@ -97,7 +87,7 @@ app.post('/sendrequest', async (req, res) => {
   receiver.requests.push({from: senderId, message});
   await receiver.save();
 
-  res.status(200).json({message: 'Request sent succesfully'});
+  res.status(200).json({message: 'Request sent successfully'});
 });
 
 app.get('/getrequests/:userId', async (req, res) => {
@@ -111,11 +101,10 @@ app.get('/getrequests/:userId', async (req, res) => {
     if (user) {
       res.json(user.requests);
     } else {
-      res.status(400);
-      throw new Error('User not found');
+      res.status(400).json({message: 'User not found'});
     }
   } catch (error) {
-    console.log('error', error);
+    console.log('Error', error);
   }
 });
 
@@ -130,9 +119,7 @@ app.post('/acceptrequest', async (req, res) => {
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      {
-        $pull: {requests: {from: requestId}},
-      },
+      {$pull: {requests: {from: requestId}}},
       {new: true},
     );
 
@@ -152,7 +139,7 @@ app.post('/acceptrequest', async (req, res) => {
       return res.status(404).json({message: 'Friend not found'});
     }
 
-    res.status(200).json({message: 'Request accepted sucesfully'});
+    res.status(200).json({message: 'Request accepted successfully'});
   } catch (error) {
     console.log('Error', error);
     res.status(500).json({message: 'Server Error'});
@@ -163,59 +150,14 @@ app.get('/user/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
 
-    const users = await User.findById(userId).populate(
+    const user = await User.findById(userId).populate(
       'friends',
       'name email image',
     );
-
-    res.json(users.friends);
+    res.json(user.friends);
   } catch (error) {
     console.log('Error fetching user', error);
   }
-});
-
-const http = require('http').createServer(app);
-
-const io = require('socket.io')(http);
-
-//{"userId" : "socket ID"}
-
-const userSocketMap = {};
-
-io.on('connection', socket => {
-  console.log('a user is connected', socket.id);
-
-  const userId = socket.handshake.query.userId;
-
-  console.log('userid', userId);
-
-  if (userId !== 'undefined') {
-    userSocketMap[userId] = socket.id;
-  }
-
-  console.log('user socket data', userSocketMap);
-
-  socket.on('disconnect', () => {
-    console.log('user disconnected', socket.id);
-    delete userSocketMap[userId];
-  });
-
-  socket.on('sendMessage', ({senderId, receiverId, message}) => {
-    const receiverSocketId = userSocketMap[receiverId];
-
-    console.log('receiver Id', receiverId);
-
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit('receiveMessage', {
-        senderId,
-        message,
-      });
-    }
-  });
-});
-
-http.listen(3200, () => {
-  console.log('Socket.IO running on port 3200');
 });
 
 app.post('/sendMessage', async (req, res) => {
@@ -233,7 +175,7 @@ app.post('/sendMessage', async (req, res) => {
     const receiverSocketId = userSocketMap[receiverId];
 
     if (receiverSocketId) {
-      console.log('emitting recieveMessage event to the reciver', receiverId);
+      console.log('Emitting receiveMessage event to the receiver', receiverId);
       io.to(receiverSocketId).emit('newMessage', newMessage);
     } else {
       console.log('Receiver socket ID not found');
@@ -241,7 +183,7 @@ app.post('/sendMessage', async (req, res) => {
 
     res.status(201).json(newMessage);
   } catch (error) {
-    console.log('ERROR', error);
+    console.log('Error', error);
   }
 });
 
@@ -261,3 +203,5 @@ app.get('/messages', async (req, res) => {
     console.log('Error', error);
   }
 });
+
+module.exports = app;
