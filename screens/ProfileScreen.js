@@ -125,7 +125,11 @@ const ProfileScreen = () => {
                 <Text style={styles.userName}>Anonym</Text>
               </Pressable>
             </View>
-            <InstaStory data={data} duration={10} />
+            <InstaStory
+              data={data}
+              duration={10}
+              storyUserContainerStyle={styles.storyContainerStyle}
+            />
           </View>
         </View>
 
@@ -169,6 +173,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 5,
     fontFamily: AvenirBold,
+    color: 'black',
   },
   channelsList: {
     marginVertical: 10,
@@ -176,6 +181,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
   },
-  channelsText: {fontSize: 15, fontFamily: AvenirBold},
-  channelName: {fontSize: 15, fontFamily: AvenirBold},
+  channelsText: {fontSize: 15, fontFamily: AvenirBold, color: 'black'},
+  channelName: {fontSize: 15, fontFamily: AvenirBold, color: 'black'},
+  storyContainerStyle: {color: 'black'},
 });

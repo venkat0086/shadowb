@@ -9,6 +9,7 @@ import {
   Image,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -22,12 +23,14 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
   const {token, setToken} = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (token) {
       navigation.replace('MainStack', {screen: 'Main'});
     }
   }, [token, navigation]);
   const handleLogin = () => {
+    setLoading(true);
     const user = {
       email: email,
       password: password,
@@ -42,6 +45,9 @@ const LoginScreen = () => {
       })
       .catch(error => {
         Alert.alert('Login error', 'Login Failed.!');
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
   return (
@@ -84,7 +90,11 @@ const LoginScreen = () => {
             </View>
 
             <Pressable onPress={handleLogin} style={styles.loginBtn}>
-              <Text style={styles.loginBtnText}>Login</Text>
+              {loading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text style={styles.loginBtnText}>Login</Text>
+              )}
             </Pressable>
 
             <Pressable onPress={() => navigation.navigate('Register')}>
@@ -124,6 +134,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     fontFamily: AvenirRegular,
     fontSize: 15,
+    color: 'black',
   },
   labelText: {
     fontSize: 18,

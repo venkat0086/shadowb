@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Alert,
   Image,
   KeyboardAvoidingView,
@@ -19,7 +20,9 @@ const RegisterScreen = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [image, setImage] = useState('');
   const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
   const handleRegister = () => {
+    setLoading(true);
     const user = {
       name: name,
       email: email,
@@ -45,6 +48,9 @@ const RegisterScreen = ({navigation}) => {
           'Registration error',
           'An error ocurred while registering!',
         );
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
   return (
@@ -124,7 +130,11 @@ const RegisterScreen = ({navigation}) => {
               </View>
 
               <Pressable onPress={handleRegister} style={styles.regBtn}>
-                <Text style={styles.btnText}>Register</Text>
+                {loading ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text style={styles.btnText}>Register</Text>
+                )}
               </Pressable>
 
               <Pressable onPress={() => navigation.navigate('Login')}>
@@ -170,6 +180,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     fontFamily: AvenirRegular,
     fontSize: 15,
+    color: 'black',
   },
   labelText: {
     fontSize: 18,

@@ -6,6 +6,7 @@ import {
   TextInput,
   View,
   KeyboardAvoidingView,
+  ActivityIndicator,
 } from 'react-native';
 import React, {
   useContext,
@@ -31,6 +32,8 @@ const ChatRoom = () => {
   const {token, userId, setToken, setUserId} = useContext(AuthContext);
   const {socket} = useSocketContext();
   const route = useRoute();
+  const [loading, setLoading] = useState(false);
+  const [mainLoading, setMainLoading] = useState(false);
   const scrollViewRef = useRef();
   useLayoutEffect(() => {
     return navigation.setOptions({
@@ -67,6 +70,7 @@ const ChatRoom = () => {
 
   listeMessages();
   const sendMessage = async (senderId, receiverId) => {
+    setLoading(true);
     try {
       await axios.post(`${SERVER_HOST}/sendMessage`, {
         senderId,
@@ -80,13 +84,17 @@ const ChatRoom = () => {
       }, 100);
     } catch (error) {
       console.log('Error', error);
+    } finally {
+      setLoading(false);
     }
   };
-  const fetchMessages = async () => {
+  const fetchMessages = async (initial = false) => {
     try {
+      if (initial) {
+        setMainLoading(true);
+      }
       const senderId = userId;
       const receiverId = route?.params?.receiverId;
-
       const response = await axios.get(`${SERVER_HOST}/messages`, {
         params: {senderId, receiverId},
       });
@@ -94,10 +102,14 @@ const ChatRoom = () => {
       setMessages(response.data);
     } catch (error) {
       console.log('Error', error);
+    } finally {
+      if (initial) {
+        setMainLoading(false);
+      }
     }
   };
   useEffect(() => {
-    fetchMessages();
+    fetchMessages(true);
   }, []);
   // console.log('messages', messages);
   const formatTime = time => {
@@ -107,33 +119,40 @@ const ChatRoom = () => {
   return (
     <KeyboardAvoidingView style={{flex: 1, backgroundColor: '#F1EBEB'}}>
       <ScrollView
+        contentContainerStyle={{flexGrow: 1}}
         showsVerticalScrollIndicator={false}
         ref={scrollViewRef}
         onContentSizeChange={() => scrollViewRef.current.scrollToEnd()}>
-        {messages?.map((item, index) => {
-          return (
-            <Pressable
-              style={[
-                item?.senderId?._id === userId
-                  ? styles.senderStyle
-                  : styles.receiverStyle,
-              ]}>
-              <View
-                style={
+        {mainLoading ? (
+          <View style={styles.loader}>
+            <ActivityIndicator color="black" />
+          </View>
+        ) : (
+          messages?.map((item, index) => {
+            return (
+              <Pressable
+                style={[
                   item?.senderId?._id === userId
-                    ? styles.senderTriangle
-                    : styles.receiverTriangle
-                }
-              />
-              <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
-                <Text style={styles.messageText}>{item?.message}</Text>
-                <Text style={styles.timeText}>
-                  {formatTime(item?.timeStamp)}
-                </Text>
-              </View>
-            </Pressable>
-          );
-        })}
+                    ? styles.senderStyle
+                    : styles.receiverStyle,
+                ]}>
+                <View
+                  style={
+                    item?.senderId?._id === userId
+                      ? styles.senderTriangle
+                      : styles.receiverTriangle
+                  }
+                />
+                <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+                  <Text style={styles.messageText}>{item?.message}</Text>
+                  <Text style={styles.timeText}>
+                    {formatTime(item?.timeStamp)}
+                  </Text>
+                </View>
+              </Pressable>
+            );
+          })
+        )}
       </ScrollView>
 
       <View style={styles.mainChatBox}>
@@ -153,7 +172,11 @@ const ChatRoom = () => {
           style={styles.sendBtn}
           onPress={() => sendMessage(userId, route?.params?.receiverId)}
           disabled={message?.length === 0}>
-          <MaterialIcon name="send" size={20} color="white" />
+          {loading ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <MaterialIcon name="send" size={20} color="white" />
+          )}
         </Pressable>
         {/* </View> */}
       </View>
@@ -267,4 +290,5 @@ const styles = StyleSheet.create({
     borderBottomColor: 'transparent',
     borderRightColor: 'white',
   },
+  loader: {flex: 1, justifyContent: 'center', alignItems: 'center'},
 });

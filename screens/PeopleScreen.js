@@ -44,5 +44,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: AvenirBold,
     marginTop: 12,
+    color: 'black',
   },
 });
