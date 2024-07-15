@@ -53,6 +53,16 @@ const ChatRoom = () => {
           </View>
         </View>
       ),
+      headerRight: () => (
+        <Ionicons
+          onPress={async () => {
+            await fetchMessages(true);
+          }}
+          size={22}
+          color="black"
+          name="refresh-circle-outline"
+        />
+      ),
     });
   }, []);
   const listeMessages = () => {
