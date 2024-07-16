@@ -54,14 +54,20 @@ const ChatRoom = () => {
         </View>
       ),
       headerRight: () => (
-        <Ionicons
+        <Pressable
+          style={{padding: 8}}
           onPress={async () => {
             await fetchMessages(true);
-          }}
-          size={22}
-          color="black"
-          name="refresh-circle-outline"
-        />
+          }}>
+          <Ionicons
+            onPress={async () => {
+              await fetchMessages(true);
+            }}
+            size={22}
+            color="black"
+            name="refresh-circle-outline"
+          />
+        </Pressable>
       ),
     });
   }, []);
