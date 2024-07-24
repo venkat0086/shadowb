@@ -8,7 +8,6 @@ const jwt = require('jsonwebtoken');
 const User = require('./models/user');
 const Message = require('./models/message');
 const {userSocketMap} = require('./userSocketMap');
-const {io} = require('./socketServer');
 
 const app = express();
 
